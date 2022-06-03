@@ -26,14 +26,16 @@ class Mirror(Tk):
         self.request_format = 'https://api.openweathermap.org/data/3.0/onecall?'
 
         self.configure(background='black')
+        self.grid_anchor(SE)
 
         self.run_clock()
         self.run_weather()
 
     def run_clock(self):
         clock = Label(self, font=("courier", self.clock_size, "bold"), bg="black", fg="white")
-        clock.grid(row=0, column=3, columnspan=2, sticky=E, pady=5)
+        clock.grid(row=0, column=2, columnspan=2, sticky=E, pady=5)
         current = time.strftime("%H : %M : %S")
+        # current = time.strftime("%H : %M")
         clock.config(text=current)
         self.after(1000, self.run_clock)
 
@@ -42,60 +44,68 @@ class Mirror(Tk):
         response = requests.get(full_request)
         weather_json = response.json()
 
-        print(json.dumps(weather_json))
-
         icon = weather_json["current"]["weather"][0]["icon"]
         weather_icon = tkinter.PhotoImage(file='./res/' + icon + '.png')
         display_icon = Label(self, image=weather_icon, borderwidth=0, highlightthickness=0, pady=5, padx=5)
         display_icon.photo = weather_icon
-        display_icon.grid(row=1, column=3)
+        display_icon.grid(row=1, column=2)
 
         temp = Label(self, font=("courier", self.title_size, "bold"), bg="black", fg="white")
         temp.config(text=str(weather_json["current"]["temp"]) + u'\N{DEGREE SIGN}')
-        temp.grid(row=1, column=4, sticky=E)
+        temp.grid(row=1, column=3, sticky=E)
 
         conditions = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
         conditions.config(text=weather_json["current"]["weather"][0]["description"])
-        conditions.grid(row=2, column=3)
+        conditions.grid(row=2, column=2)
 
         city = Label(self, font=("courier", self.h1_size, "bold"), bg="black", fg="white")
         city.config(text=self.city)
-        city.grid(row=2, column=4, sticky=E)
+        city.grid(row=2, column=3, sticky=E)
 
-        range_str = str(weather_json["daily"][0]["temp"]["min"]) + u'\N{DEGREE SIGN} - ' + str(weather_json["daily"][0]["temp"]["max"]) + u'\N{DEGREE SIGN}'
+        range_str = str(weather_json["daily"][0]["temp"]["min"]) + u'\N{DEGREE SIGN} - ' + str(
+            weather_json["daily"][0]["temp"]["max"]) + u'\N{DEGREE SIGN}'
         temp_range = Label(self, font=("courier", self.p_size, "bold"), bg="black", fg="white")
         temp_range.config(text=range_str)
-        temp_range.grid(row=3, column=3)
+        temp_range.grid(row=3, column=2)
 
         state = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
         state.config(text=self.state)
-        state.grid(row=3, column=4, sticky=E)
+        state.grid(row=3, column=3, sticky=E)
+
+        forecast_icon_1 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        forecast_label_1 = Label(self, image=forecast_icon_1, borderwidth=0, highlightthickness=0, padx=5, pady=5)
+        forecast_label_1.photo = forecast_icon_1
+        forecast_label_1.grid(row=6, column=0)
+        forecast_icon_2 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        forecast_label_2 = Label(self, image=forecast_icon_2, borderwidth=0, highlightthickness=0, padx=5, pady=5)
+        forecast_label_2.photo = forecast_icon_2
+        forecast_label_2.grid(row=6, column=1)
+        forecast_icon_3 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        forecast_label_3 = Label(self, image=forecast_icon_3, borderwidth=0, highlightthickness=0, padx=5, pady=5)
+        forecast_label_3.photo = forecast_icon_3
+        forecast_label_3.grid(row=6, column=2)
+        forecast_icon_4 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        forecast_label_4 = Label(self, image=forecast_icon_4, borderwidth=0, highlightthickness=0, padx=5, pady=5)
+        forecast_label_4.photo = forecast_icon_4
+        forecast_label_4.grid(row=6, column=3)
 
         week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        today = datetime.today().weekday()
+        today = datetime.today().weekday() + 1
         i = 0
         while i < 4:
-            d1 = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
-            d1.config(text=week[today+1])
-            d1.grid(row=6, column=1)
-        # d2 = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
-        # d2.config(text=week[today+2])
-        # d2.grid(row=6, column=2)
-        # d3 = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
-        # d3.config(text=week[today+3])
-        # d3.grid(row=6, column=3)
-        # d4 = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
-        # d4.config(text=week[today+4])
-        # d4.grid(row=6, column=4)
-        # d4 = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
-        # d4.config(text=week[today+5])
-        # d4.grid(row=6, column=5)
+            if today == 7:
+                today = 0
+            Label(self, font=("courier", self.p_size, "italic"), text=week[today], bg="black", fg="white").grid(row=7, column=i)
+            i += 1
+            today += 1
 
+        y = 0
+        while y < 4:
+            self.columnconfigure(y, weight=1, uniform="foo")
+            y += 1
 
         # DO NOT CALL MORE FREQUENTLY THAN 1440ms, OR WILL EXCEED 1000 FREE API CALLS PER DAY
-        #self.after(30000, self.run_weather)
-
-
+        # self.after(30000, self.run_weather)
 
 
 if __name__ == '__main__':
