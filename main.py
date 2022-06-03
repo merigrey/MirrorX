@@ -51,7 +51,7 @@ class Mirror(Tk):
         display_icon.grid(row=1, column=2)
 
         temp = Label(self, font=("courier", self.title_size, "bold"), bg="black", fg="white")
-        temp.config(text=str(weather_json["current"]["temp"]) + u'\N{DEGREE SIGN}')
+        temp.config(text=str(int(weather_json["current"]["temp"])) + u'\N{DEGREE SIGN}')
         temp.grid(row=1, column=3, sticky=E)
 
         conditions = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
@@ -62,8 +62,8 @@ class Mirror(Tk):
         city.config(text=self.city)
         city.grid(row=2, column=3, sticky=E)
 
-        range_str = str(weather_json["daily"][0]["temp"]["min"]) + u'\N{DEGREE SIGN} - ' + str(
-            weather_json["daily"][0]["temp"]["max"]) + u'\N{DEGREE SIGN}'
+        range_str = str(int(weather_json["daily"][0]["temp"]["min"])) + u'\N{DEGREE SIGN} - ' + str(
+            int(weather_json["daily"][0]["temp"]["max"])) + u'\N{DEGREE SIGN}'
         temp_range = Label(self, font=("courier", self.p_size, "bold"), bg="black", fg="white")
         temp_range.config(text=range_str)
         temp_range.grid(row=3, column=2)
@@ -72,22 +72,28 @@ class Mirror(Tk):
         state.config(text=self.state)
         state.grid(row=3, column=3, sticky=E)
 
-        forecast_icon_1 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        self.rowconfigure(6, minsize=40)
+
+        forecast_icon_1 = tkinter.PhotoImage(
+            file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
         forecast_label_1 = Label(self, image=forecast_icon_1, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_1.photo = forecast_icon_1
-        forecast_label_1.grid(row=6, column=0)
-        forecast_icon_2 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        forecast_label_1.grid(row=7, column=0)
+        forecast_icon_2 = tkinter.PhotoImage(
+            file='./res/' + str(weather_json["daily"][2]["weather"][0]["icon"]) + '.png')
         forecast_label_2 = Label(self, image=forecast_icon_2, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_2.photo = forecast_icon_2
-        forecast_label_2.grid(row=6, column=1)
-        forecast_icon_3 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        forecast_label_2.grid(row=7, column=1)
+        forecast_icon_3 = tkinter.PhotoImage(
+            file='./res/' + str(weather_json["daily"][3]["weather"][0]["icon"]) + '.png')
         forecast_label_3 = Label(self, image=forecast_icon_3, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_3.photo = forecast_icon_3
-        forecast_label_3.grid(row=6, column=2)
-        forecast_icon_4 = tkinter.PhotoImage(file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+        forecast_label_3.grid(row=7, column=2)
+        forecast_icon_4 = tkinter.PhotoImage(
+            file='./res/' + str(weather_json["daily"][4]["weather"][0]["icon"]) + '.png')
         forecast_label_4 = Label(self, image=forecast_icon_4, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_4.photo = forecast_icon_4
-        forecast_label_4.grid(row=6, column=3)
+        forecast_label_4.grid(row=7, column=3)
 
         week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         today = datetime.today().weekday() + 1
@@ -95,7 +101,21 @@ class Mirror(Tk):
         while i < 4:
             if today == 7:
                 today = 0
-            Label(self, font=("courier", self.p_size, "italic"), text=week[today], bg="black", fg="white").grid(row=7, column=i)
+            Label(self, font=("courier", self.p_size, "italic"), text=week[today], bg="black", fg="white").grid(row=8,
+                                                                                                                column=i)
+            min_temp = int(weather_json["daily"][i + 1]["temp"]["min"])
+            max_temp = int(weather_json["daily"][i + 1]["temp"]["max"])
+            cond = weather_json["daily"][i + 1]["weather"][0]["main"]
+            precip = int(weather_json["daily"][i + 1]["pop"] * 100)
+
+            Label(self, font=("courier", self.p_size, "italic"),
+                  text=str(min_temp) + u'\N{DEGREE SIGN} - ' + str(max_temp) + u'\N{DEGREE SIGN}', bg="black", fg="white").grid(
+                row=9, column=i)
+            Label(self, font=("courier", self.p_size, "italic"), text=cond, bg="black", fg="white").grid(row=10,
+                                                                                                         column=i)
+            Label(self, font=("courier", self.p_size, "italic"), text=str(precip) + '% precip', bg="black",
+                  fg="white").grid(row=11, column=i)
+
             i += 1
             today += 1
 
