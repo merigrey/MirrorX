@@ -1,0 +1,40 @@
+This is a sample JSON structure with only the useful/used items. 
+Full library at https://openweathermap.org/api/one-call-3
+
+{
+   "current":{
+      "temp":66.43,
+      "feels_like":66.58,
+      "humidity":81,
+      "uvi":0.37,
+      "weather":[
+         {
+            "id":500,
+            "main":"Rain",
+            "description":"light rain",
+            "icon":"10d"
+         }
+      ],
+   },
+   "daily":[
+      {
+         "temp":{
+            "day":75.09,
+            "min":51.93,
+            "max":75.09,
+            "night":58.71,
+            "eve":66.43,
+            "morn":56.01
+         },
+         "weather":[
+            {
+               "id":501,
+               "main":"Rain",
+               "description":"moderate rain",
+               "icon":"10d"
+            }
+         ],
+         "pop":0.9,
+      },
+   ]
+}
