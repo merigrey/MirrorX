@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 import requests
 import json
-
+import config
 
 class Mirror(Tk):
 
@@ -20,7 +20,7 @@ class Mirror(Tk):
         self.h2_size = 30
         self.p_size = 20
 
-        self.api_key = ''
+        self.api_key = config.api_key
         self.city = "Bothell"
         self.state = "WA"
         self.lat = '47.7601'
