@@ -18,7 +18,7 @@ class Mirror(Tk):
         self.h2_size = 30
         self.p_size = 20
 
-        self.api_key = 'd792f712718a58df006933a2204b10be'
+        self.api_key = ''
         self.city = "Bothell"
         self.state = "WA"
         self.lat = '47.7601'
