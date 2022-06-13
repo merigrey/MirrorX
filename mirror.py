@@ -74,6 +74,8 @@ class Mirror(Tk):
 
         self.rowconfigure(6, minsize=40)
 
+        # Note: unfortunately, tkinter does not allow PhotoImage population using loops. The garbage collector
+        # snatches the images and leaves blank squares.
         forecast_icon_1 = tkinter.PhotoImage(
             file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
         forecast_label_1 = Label(self, image=forecast_icon_1, borderwidth=0, highlightthickness=0, padx=5, pady=5)
