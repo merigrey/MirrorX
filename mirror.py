@@ -12,6 +12,8 @@ class Mirror(Tk):
         super().__init__()
         self.title('MirrorX')
 
+        self.cache = json.loads('[]')
+
         self.clock_size = 80
         self.title_size = 60
         self.h1_size = 40
@@ -74,58 +76,67 @@ class Mirror(Tk):
 
         self.rowconfigure(6, minsize=40)
 
+        daily_string = "["
+        for i in range(1, 4):
+            daily_string += str(weather_json["daily"][i]) + ","
+        daily_string += str(weather_json["daily"][4]) + "]"
+        daily_string = daily_string.replace("\'", "\"")
+        if json.dumps(self.cache) == '[]' or json.loads(daily_string) != self.cache:
+            self.cache = json.loads(daily_string)
+            self.update_forecast()
+
+        # TODO printing is unevel in the window, when 7" monitor attached resize to equal them out
+        for i in range(0, 4):
+            self.columnconfigure(i, weight=1, uniform="foo")
+
+        # DO NOT CALL MORE FREQUENTLY THAN 1440ms, OR WILL EXCEED 1000 FREE API CALLS PER DAY
+        self.after(30000, self.run_weather)
+
+    def update_forecast(self):
+        # Note: unfortunately, tkinter does not allow PhotoImage population using loops. The garbage collector
+        # snatches the images and leaves blank squares.
         forecast_icon_1 = tkinter.PhotoImage(
-            file='./res/' + str(weather_json["daily"][1]["weather"][0]["icon"]) + '.png')
+            file='./res/' + str(self.cache[0]["weather"][0]["icon"]) + '.png')
         forecast_label_1 = Label(self, image=forecast_icon_1, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_1.photo = forecast_icon_1
         forecast_label_1.grid(row=7, column=0)
         forecast_icon_2 = tkinter.PhotoImage(
-            file='./res/' + str(weather_json["daily"][2]["weather"][0]["icon"]) + '.png')
+            file='./res/' + str(self.cache[1]["weather"][0]["icon"]) + '.png')
         forecast_label_2 = Label(self, image=forecast_icon_2, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_2.photo = forecast_icon_2
         forecast_label_2.grid(row=7, column=1)
         forecast_icon_3 = tkinter.PhotoImage(
-            file='./res/' + str(weather_json["daily"][3]["weather"][0]["icon"]) + '.png')
+            file='./res/' + str(self.cache[2]["weather"][0]["icon"]) + '.png')
         forecast_label_3 = Label(self, image=forecast_icon_3, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_3.photo = forecast_icon_3
         forecast_label_3.grid(row=7, column=2)
         forecast_icon_4 = tkinter.PhotoImage(
-            file='./res/' + str(weather_json["daily"][4]["weather"][0]["icon"]) + '.png')
+            file='./res/' + str(self.cache[3]["weather"][0]["icon"]) + '.png')
         forecast_label_4 = Label(self, image=forecast_icon_4, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_4.photo = forecast_icon_4
         forecast_label_4.grid(row=7, column=3)
 
         week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         today = datetime.today().weekday() + 1
-        i = 0
-        while i < 4:
+
+        for i in range(0, 4):
             if today == 7:
                 today = 0
             Label(self, font=("courier", self.p_size, "italic"), text=week[today], bg="black", fg="white").grid(row=8,
                                                                                                                 column=i)
-            min_temp = int(weather_json["daily"][i + 1]["temp"]["min"])
-            max_temp = int(weather_json["daily"][i + 1]["temp"]["max"])
-            cond = weather_json["daily"][i + 1]["weather"][0]["main"]
-            precip = int(weather_json["daily"][i + 1]["pop"] * 100)
-
+            min_temp = int(self.cache[i]["temp"]["min"])
+            max_temp = int(self.cache[i]["temp"]["max"])
+            cond = self.cache[i]["weather"][0]["main"]
+            precip = int(self.cache[i]["pop"] * 100)
             Label(self, font=("courier", self.p_size, "italic"),
-                  text=str(min_temp) + u'\N{DEGREE SIGN} - ' + str(max_temp) + u'\N{DEGREE SIGN}', bg="black", fg="white").grid(
+                  text=str(min_temp) + u'\N{DEGREE SIGN} - ' + str(max_temp) + u'\N{DEGREE SIGN}', bg="black",
+                  fg="white").grid(
                 row=9, column=i)
             Label(self, font=("courier", self.p_size, "italic"), text=cond, bg="black", fg="white").grid(row=10,
                                                                                                          column=i)
             Label(self, font=("courier", self.p_size, "italic"), text=str(precip) + '% precip', bg="black",
                   fg="white").grid(row=11, column=i)
-
-            i += 1
             today += 1
-
-        y = 0
-        while y < 4:
-            self.columnconfigure(y, weight=1, uniform="foo")
-            y += 1
-
-        # DO NOT CALL MORE FREQUENTLY THAN 1440ms, OR WILL EXCEED 1000 FREE API CALLS PER DAY
-        # self.after(30000, self.run_weather)
 
 
 if __name__ == '__main__':
