@@ -41,13 +41,15 @@ class Mirror(Tk):
     def run_clock(self):
         clock = Label(self, font=("courier", self.clock_size, "bold"), bg="black", fg="white")
         clock.grid(row=0, column=2, columnspan=2, sticky=E, pady=5)
-        current = time.strftime("%H : %M : %S")
-        # current = time.strftime("%H : %M")
+        #current = time.strftime("%H : %M : %S")
+        current = time.strftime("%H : %M")
         clock.config(text=current)
         self.after(1000, self.run_clock)
 
     def run_weather(self):
-        full_request = self.request_format + 'lat=' + self.lat + '&lon=' + self.long + '&exclude=minutely,hourly&units=imperial&appid=' + self.api_key
+        full_request = self.request_format + 'lat=' + self.lat + '&lon=' + self.long + '&exclude=minutely,' \
+                                                                                       'hourly&units=imperial&appid='\
+                       + self.api_key
         response = requests.get(full_request)
         weather_json = response.json()
 
@@ -55,15 +57,16 @@ class Mirror(Tk):
         weather_icon = tkinter.PhotoImage(file='./res/' + icon + '.png')
         display_icon = Label(self, image=weather_icon, borderwidth=0, highlightthickness=0, pady=5, padx=5)
         display_icon.photo = weather_icon
-        display_icon.grid(row=1, column=2)
+        display_icon.grid(row=1, column=1, columnspan=2)
 
         temp = Label(self, font=("courier", self.title_size, "bold"), bg="black", fg="white")
         temp.config(text=str(int(weather_json["current"]["temp"])) + u'\N{DEGREE SIGN}')
-        temp.grid(row=1, column=3, sticky=E)
+        temp.grid(row=1, column=3,sticky=E)
 
         conditions = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
-        conditions.config(text=weather_json["current"]["weather"][0]["description"])
-        conditions.grid(row=2, column=2)
+        conds = weather_json["current"]["weather"][0]["description"].replace(" ", "\n")
+        conditions.config(text=conds)
+        conditions.grid(row=2, column=1, columnspan=2)
 
         city = Label(self, font=("courier", self.h1_size, "bold"), bg="black", fg="white")
         city.config(text=self.city)
@@ -73,7 +76,7 @@ class Mirror(Tk):
             int(weather_json["daily"][0]["temp"]["max"])) + u'\N{DEGREE SIGN}'
         temp_range = Label(self, font=("courier", self.p_size, "bold"), bg="black", fg="white")
         temp_range.config(text=range_str)
-        temp_range.grid(row=3, column=2)
+        temp_range.grid(row=3, column=1, columnspan=2)
 
         state = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
         state.config(text=self.state)
@@ -95,7 +98,7 @@ class Mirror(Tk):
             self.columnconfigure(i, weight=1, uniform="foo")
 
         # DO NOT CALL MORE FREQUENTLY THAN 1440ms, OR WILL EXCEED 1000 FREE API CALLS PER DAY
-        self.after(30000, self.run_weather)
+        self.after(600000, self.run_weather)
 
     def update_forecast(self):
         # Note: unfortunately, tkinter does not allow PhotoImage population using loops. The garbage collector
@@ -149,6 +152,7 @@ class Mirror(Tk):
 
     def close(self, event=None):
         self.destroy()
+
 
 if __name__ == '__main__':
     app = Mirror()
