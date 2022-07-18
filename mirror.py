@@ -58,7 +58,7 @@ class Mirror(Tk):
         weather_icon = ImageTk.PhotoImage(small_icon.resize((250, 250)))
         display_icon = Label(self, image=weather_icon, borderwidth=0, highlightthickness=0, pady=5, padx=5)
         display_icon.image = weather_icon
-        display_icon.grid(row=1, column=0, rowspan=2, columnspan=2)
+        display_icon.grid(row=0, column=0, rowspan=3, columnspan=2, sticky=N)
 
         temp = Label(self, font=("courier", self.title_size, "bold"), bg="black", fg="white")
         temp.config(text=str(int(weather_json["current"]["temp"])) + u'\N{DEGREE SIGN}')
@@ -97,7 +97,7 @@ class Mirror(Tk):
             self.columnconfigure(i, weight=1, uniform="foo")
             self.rowconfigure(i, weight=1, uniform="foo")
 
-        self.rowconfigure(0, weight=1, minsize=80)
+        self.rowconfigure(0, weight=1, minsize=90)
 
         # for y in range(0,2):
         #     self.rowconfigure(y, weight=1, uniform="foo")
