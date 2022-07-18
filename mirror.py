@@ -40,7 +40,7 @@ class Mirror(Tk):
 
     def run_clock(self):
         clock = Label(self, font=("courier", self.clock_size, "bold"), bg="black", fg="white")
-        clock.grid(row=0, column=2, columnspan=2, sticky=E, pady=5)
+        clock.grid(row=0, column=2, columnspan=2, sticky=SE)
         # current = time.strftime("%H : %M : %S")
         current = time.strftime("%H : %M")
         clock.config(text=current)
@@ -58,7 +58,7 @@ class Mirror(Tk):
         weather_icon = ImageTk.PhotoImage(small_icon.resize((300, 300)))
         display_icon = Label(self, image=weather_icon, borderwidth=0, highlightthickness=0, pady=5, padx=5)
         display_icon.image = weather_icon
-        display_icon.grid(row=1, column=0, sticky=E)
+        display_icon.grid(row=1, column=0, rowspan=2, sticky=E)
 
         temp = Label(self, font=("courier", self.title_size, "bold"), bg="black", fg="white")
         temp.config(text=str(int(weather_json["current"]["temp"])) + u'\N{DEGREE SIGN}')

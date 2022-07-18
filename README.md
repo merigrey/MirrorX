@@ -11,7 +11,9 @@ This is a simple program that displays a clock and weather app
 #### DEPENDENCIES
 
     pip install tk
+    sudo apt-get install python3-pil python3-pil.imagetk
 
 #### ON WINDOWS
 
+    pip install pillow
     python mirror.py
