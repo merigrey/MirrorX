@@ -41,7 +41,7 @@ class Mirror(Tk):
     def run_clock(self):
         clock = Label(self, font=("courier", self.clock_size, "bold"), bg="black", fg="white")
         clock.grid(row=0, column=2, columnspan=2, sticky=SE)
-        # current = time.strftime("%H : %M : %S")
+        #current = time.strftime("%H : %M : %S")
         current = time.strftime("%H : %M")
         clock.config(text=current)
         self.after(1000, self.run_clock)
@@ -55,10 +55,10 @@ class Mirror(Tk):
 
         icon = weather_json["current"]["weather"][0]["icon"]
         small_icon = Image.open('./res/' + icon + '.png')
-        weather_icon = ImageTk.PhotoImage(small_icon.resize((300, 300)))
+        weather_icon = ImageTk.PhotoImage(small_icon.resize((250, 250)))
         display_icon = Label(self, image=weather_icon, borderwidth=0, highlightthickness=0, pady=5, padx=5)
         display_icon.image = weather_icon
-        display_icon.grid(row=1, column=0, rowspan=2, sticky=E)
+        display_icon.grid(row=1, column=0, rowspan=2, columnspan=2)
 
         temp = Label(self, font=("courier", self.title_size, "bold"), bg="black", fg="white")
         temp.config(text=str(int(weather_json["current"]["temp"])) + u'\N{DEGREE SIGN}')
@@ -83,8 +83,6 @@ class Mirror(Tk):
         state.config(text=self.state)
         state.grid(row=3, column=3, sticky=E)
 
-        # self.rowconfigure(4, minsize=20)
-
         daily_string = "["
         for i in range(1, 4):
             daily_string += str(weather_json["daily"][i]) + ","
@@ -97,9 +95,12 @@ class Mirror(Tk):
         # TODO printing is unequal in the window, when 7" monitor attached resize to equal them out
         for i in range(0, 4):
             self.columnconfigure(i, weight=1, uniform="foo")
+            self.rowconfigure(i, weight=1, uniform="foo")
 
-        for y in range(0,2):
-            self.rowconfigure(y, weight=1, uniform="foo")
+        self.rowconfigure(0, weight=1, minsize=80)
+
+        # for y in range(0,2):
+        #     self.rowconfigure(y, weight=1, uniform="foo")
 
         # DO NOT CALL MORE FREQUENTLY THAN 1440ms, OR WILL EXCEED 1000 FREE API CALLS PER DAY
         self.after(600000, self.run_weather)
