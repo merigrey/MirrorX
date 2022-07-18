@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 import json
 import config
-
+from PIL import Image, ImageTk
 
 class Mirror(Tk):
 
@@ -41,32 +41,33 @@ class Mirror(Tk):
     def run_clock(self):
         clock = Label(self, font=("courier", self.clock_size, "bold"), bg="black", fg="white")
         clock.grid(row=0, column=2, columnspan=2, sticky=E, pady=5)
-        #current = time.strftime("%H : %M : %S")
+        # current = time.strftime("%H : %M : %S")
         current = time.strftime("%H : %M")
         clock.config(text=current)
         self.after(1000, self.run_clock)
 
     def run_weather(self):
         full_request = self.request_format + 'lat=' + self.lat + '&lon=' + self.long + '&exclude=minutely,' \
-                                                                                       'hourly&units=imperial&appid='\
+                                                                                       'hourly&units=imperial&appid=' \
                        + self.api_key
         response = requests.get(full_request)
         weather_json = response.json()
 
         icon = weather_json["current"]["weather"][0]["icon"]
-        weather_icon = tkinter.PhotoImage(file='./res/' + icon + '.png')
+        small_icon = Image.open('./res/' + icon + '.png')
+        weather_icon = ImageTk.PhotoImage(small_icon.resize((300, 300)))
         display_icon = Label(self, image=weather_icon, borderwidth=0, highlightthickness=0, pady=5, padx=5)
-        display_icon.photo = weather_icon
-        display_icon.grid(row=1, column=1, columnspan=2)
+        display_icon.image = weather_icon
+        display_icon.grid(row=1, column=0, sticky=E)
 
         temp = Label(self, font=("courier", self.title_size, "bold"), bg="black", fg="white")
         temp.config(text=str(int(weather_json["current"]["temp"])) + u'\N{DEGREE SIGN}')
-        temp.grid(row=1, column=3,sticky=E)
+        temp.grid(row=1, column=3, sticky=E)
 
         conditions = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
         conds = weather_json["current"]["weather"][0]["description"].replace(" ", "\n")
         conditions.config(text=conds)
-        conditions.grid(row=2, column=1, columnspan=2)
+        conditions.grid(row=1, column=1, columnspan=2)
 
         city = Label(self, font=("courier", self.h1_size, "bold"), bg="black", fg="white")
         city.config(text=self.city)
@@ -74,15 +75,15 @@ class Mirror(Tk):
 
         range_str = str(int(weather_json["daily"][0]["temp"]["min"])) + u'\N{DEGREE SIGN} - ' + str(
             int(weather_json["daily"][0]["temp"]["max"])) + u'\N{DEGREE SIGN}'
-        temp_range = Label(self, font=("courier", self.p_size, "bold"), bg="black", fg="white")
+        temp_range = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
         temp_range.config(text=range_str)
-        temp_range.grid(row=3, column=1, columnspan=2)
+        temp_range.grid(row=2, column=1, columnspan=2)
 
         state = Label(self, font=("courier", self.h2_size, "bold"), bg="black", fg="white")
         state.config(text=self.state)
         state.grid(row=3, column=3, sticky=E)
 
-        #self.rowconfigure(4, minsize=20)
+        # self.rowconfigure(4, minsize=20)
 
         daily_string = "["
         for i in range(1, 4):
@@ -96,6 +97,9 @@ class Mirror(Tk):
         # TODO printing is unequal in the window, when 7" monitor attached resize to equal them out
         for i in range(0, 4):
             self.columnconfigure(i, weight=1, uniform="foo")
+
+        for y in range(0,2):
+            self.rowconfigure(y, weight=1, uniform="foo")
 
         # DO NOT CALL MORE FREQUENTLY THAN 1440ms, OR WILL EXCEED 1000 FREE API CALLS PER DAY
         self.after(600000, self.run_weather)
