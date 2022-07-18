@@ -6,11 +6,16 @@ import requests
 import json
 import config
 
+
 class Mirror(Tk):
 
     def __init__(self):
         super().__init__()
         self.title('MirrorX')
+        self.attributes("-fullscreen", True)
+        self.state = True
+        self.bind("<F12>", self.toggle_fullscreen)
+        self.bind("<Escape>", self.close)
 
         self.cache = json.loads('[]')
 
@@ -85,7 +90,7 @@ class Mirror(Tk):
             self.cache = json.loads(daily_string)
             self.update_forecast()
 
-        # TODO printing is unevel in the window, when 7" monitor attached resize to equal them out
+        # TODO printing is unequal in the window, when 7" monitor attached resize to equal them out
         for i in range(0, 4):
             self.columnconfigure(i, weight=1, uniform="foo")
 
@@ -138,6 +143,12 @@ class Mirror(Tk):
                   fg="white").grid(row=11, column=i)
             today += 1
 
+    def toggle_fullscreen(self, event=None):
+        self.state = not self.state
+        self.attributes("-fullscreen", self.state)
+
+    def close(self, event=None):
+        self.destroy()
 
 if __name__ == '__main__':
     app = Mirror()
