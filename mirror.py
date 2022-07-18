@@ -19,11 +19,11 @@ class Mirror(Tk):
 
         self.cache = json.loads('[]')
 
-        self.clock_size = 80
-        self.title_size = 60
-        self.h1_size = 40
-        self.h2_size = 30
-        self.p_size = 20
+        self.clock_size = 70
+        self.title_size = 50
+        self.h1_size = 35
+        self.h2_size = 25
+        self.p_size = 15
 
         self.api_key = config.api_key
         self.city = "Bothell"
@@ -82,7 +82,7 @@ class Mirror(Tk):
         state.config(text=self.state)
         state.grid(row=3, column=3, sticky=E)
 
-        self.rowconfigure(6, minsize=40)
+        #self.rowconfigure(4, minsize=20)
 
         daily_string = "["
         for i in range(1, 4):
@@ -107,22 +107,22 @@ class Mirror(Tk):
             file='./res/' + str(self.cache[0]["weather"][0]["icon"]) + '.png')
         forecast_label_1 = Label(self, image=forecast_icon_1, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_1.photo = forecast_icon_1
-        forecast_label_1.grid(row=7, column=0)
+        forecast_label_1.grid(row=5, column=0)
         forecast_icon_2 = tkinter.PhotoImage(
             file='./res/' + str(self.cache[1]["weather"][0]["icon"]) + '.png')
         forecast_label_2 = Label(self, image=forecast_icon_2, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_2.photo = forecast_icon_2
-        forecast_label_2.grid(row=7, column=1)
+        forecast_label_2.grid(row=5, column=1)
         forecast_icon_3 = tkinter.PhotoImage(
             file='./res/' + str(self.cache[2]["weather"][0]["icon"]) + '.png')
         forecast_label_3 = Label(self, image=forecast_icon_3, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_3.photo = forecast_icon_3
-        forecast_label_3.grid(row=7, column=2)
+        forecast_label_3.grid(row=5, column=2)
         forecast_icon_4 = tkinter.PhotoImage(
             file='./res/' + str(self.cache[3]["weather"][0]["icon"]) + '.png')
         forecast_label_4 = Label(self, image=forecast_icon_4, borderwidth=0, highlightthickness=0, padx=5, pady=5)
         forecast_label_4.photo = forecast_icon_4
-        forecast_label_4.grid(row=7, column=3)
+        forecast_label_4.grid(row=5, column=3)
 
         week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         today = datetime.today().weekday() + 1
@@ -130,7 +130,7 @@ class Mirror(Tk):
         for i in range(0, 4):
             if today == 7:
                 today = 0
-            Label(self, font=("courier", self.p_size, "italic"), text=week[today], bg="black", fg="white").grid(row=8,
+            Label(self, font=("courier", self.p_size, "italic"), text=week[today], bg="black", fg="white").grid(row=6,
                                                                                                                 column=i)
             min_temp = int(self.cache[i]["temp"]["min"])
             max_temp = int(self.cache[i]["temp"]["max"])
@@ -139,11 +139,11 @@ class Mirror(Tk):
             Label(self, font=("courier", self.p_size, "italic"),
                   text=str(min_temp) + u'\N{DEGREE SIGN} - ' + str(max_temp) + u'\N{DEGREE SIGN}', bg="black",
                   fg="white").grid(
-                row=9, column=i)
-            Label(self, font=("courier", self.p_size, "italic"), text=cond, bg="black", fg="white").grid(row=10,
+                row=7, column=i)
+            Label(self, font=("courier", self.p_size, "italic"), text=cond, bg="black", fg="white").grid(row=8,
                                                                                                          column=i)
             Label(self, font=("courier", self.p_size, "italic"), text=str(precip) + '% precip', bg="black",
-                  fg="white").grid(row=11, column=i)
+                  fg="white").grid(row=9, column=i)
             today += 1
 
     def toggle_fullscreen(self, event=None):
